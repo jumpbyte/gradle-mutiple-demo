@@ -1,0 +1,6 @@
+rootProject.name = 'gradle-mutiple-demo'
+include 'travel-user'
+include 'travel-product'
+include 'travel-order'
+include 'travel-sys-web'
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="utour.travel.dao.IUserMapper">
+    <select id="countAll" resultType="int">
+      SELECT COUNT(1) FROM [dbo].[User]
+    </select>
+
+    <select  id="selectAll" resultType="User">
+        select * from [dbo].[User] order by 1 asc
+    </select>
+    <!--执行insert操作的SQL语句。id和parameterType分别与IUserDao接口中的insert方法的名字和参数类型一致。
+useGeneratedKeys设置为"true"表明要MyBatis获取由数据库自动生成的主键；keyProperty="userId"指定把获取到的主键值注入到User的userId属性-->
+    <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO [dbo].[User]
+           ([userName]
+           ,[loginName]
+           ,[sex]
+           ,[birthDate])
+        VALUES(#{userName},#{loginName},#{sex},#{birthDate})
+    </insert>
+
+    <delete id="delete" parameterType="int" >
+        delete from [dbo].[User] where userId=#{userId}
+    </delete>
+
+    <select id="findById" parameterType="int" resultType="User">
+        select * from [dbo].[User] where userId=#{userId}
+    </select>
+</mapper>

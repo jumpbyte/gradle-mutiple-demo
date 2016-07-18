@@ -1,0 +1,12 @@
+apply plugin:"java"
+
+ext{
+
+    versionDef = "0.0.1-SNAPSHOT"
+    jvmVersion="1.7"
+    junitVersion="4.11"
+    REPOSITORY_URL = "http://127.0.0.1:8081/nexus/content/repositories/central/"
+    RELEASE_REPOSITORY_URL = "http://127.0.0.1:8081/nexus/content/repositories/releases"
+    SNAPSHOT_REPOSITORY_URL = "http://127.0.0.1:8081/nexus/content/repositories/snapshots"
+}
+

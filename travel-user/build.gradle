@@ -1,0 +1,36 @@
+apply plugin: 'org.akhikhl.gretty'
+
+
+/*gretty插件配置*/
+buildscript{
+    dependencies{
+        classpath 'org.akhikhl.gretty:gretty:1.2.4'
+    }
+    repositories {
+        mavenCentral()
+    }
+}
+
+/*项目结构属性设置*/
+sourceSets{
+    test{
+        resources {
+            srcDirs("src/test/resources","src/main/resources","src/main/webapp/WEB-INF")
+        }
+    }
+}
+
+gretty {
+    port = 8080
+    contextPath = "/user-web"
+    servletContainer = 'jetty9'
+    scanInterval=2 //监视周期，单位为秒，设置为0等于完全关闭热部署
+//     scanDir： //需要监视的文件夹
+    recompileOnSourceChange=true//监视源码变动，自动编译
+    reloadOnClassChange=true//编译的类发生改变，自动加载
+    reloadOnConfigChange=true//WEB-INF或META-INF发生改变
+    reloadOnLibChange=true//依赖发生改变
+    fastReload=true;
+}
+
+

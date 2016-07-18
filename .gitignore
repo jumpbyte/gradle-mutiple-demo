@@ -1,0 +1,13 @@
+.DS_Store
+.idea
+.gradle
+.git
+build/
+build/**
+gradle-mutiple-demo.iml
+/.idea
+/travel-order/*.iml
+/**/*.iml
+/travel-user/*.iml
+/travel-product/*.iml
+/travel-sys-web/*.iml

@@ -1,2 +1,2 @@
 #gradle-mutiple-demo 
-gradle ¶àÄ£¿éÏîÄ¿´î½¨Ê¾Àı
+gradle å¤šé¡¹ç›®æ­å»ºç¤ºä¾‹

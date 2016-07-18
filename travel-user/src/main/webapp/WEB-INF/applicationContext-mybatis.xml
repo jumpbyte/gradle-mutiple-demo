@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+    <!-- 自动扫描 -->
+    <context:component-scan base-package="utour.travel.dao" />
+    <!-- 引入配置文件 -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties" />
+    </bean>
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <!--驱动器名称-->
+        <property name="driverClassName"  value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <!--&lt;!&ndash; 初始化连接大小 &ndash;&gt;-->
+        <!--<property name="initialSize" value="${jdbc.initialSize}"></property>-->
+        <!--&lt;!&ndash; 连接池最大数量 &ndash;&gt;-->
+        <!--<property name="maxActive" value="${jdbc.maxActive}"></property>-->
+        <!--&lt;!&ndash; 连接池最大空闲 &ndash;&gt;-->
+        <!--<property name="maxIdle" value="${jdbc.maxIdle}"></property>-->
+        <!--&lt;!&ndash; 连接池最小空闲 &ndash;&gt;-->
+        <!--<property name="minIdle" value="${jdbc.minIdle}"></property>-->
+        <!--&lt;!&ndash; 获取连接最大等待时间 &ndash;&gt;-->
+        <!--<property name="maxWait" value="${jdbc.maxWait}"></property>-->
+    </bean>
+    <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+        <!-- 自动扫描mapping.xml文件 -->
+        <property name="mapperLocations">
+           <list>
+               <value>classpath:mybatis/mappings/**/*.xml</value>
+               <value>classpath:mybatis_mapper/*.xml</value>
+           </list>
+        </property>
+    </bean>
+    <!-- dao接口所在包名，Spring会自动查找其下的类 -->
+    <!-- 用于将接口映射为具体的实例 ，使得在Service中可以直接注入相关的Dao接口来进行数据访问-->
+    <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
+        <!--<property name="basePackage" value="utour.travel.dao" />-->
+        <!--<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>-->
+    <!--</bean>-->
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="utour.travel.dao" />
+        <property name="properties">
+            <value>
+                mappers=tk.mybatis.mapper.common.Mapper
+            </value>
+        </property>
+    </bean>
+    <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- mybatis数据访问的核心模板 -->
+    <bean class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory" />
+    </bean>
+<!-- 此处说明一下引入的几个关于mybatis的Bean。
+    1、SqlSessionFactory：MyBatis的应用程序都以一个SqlSessionFactory对象的实例为核心。可以从SqlSessionFactory中获取SqlSession，
+       而SqlSession对象完全包含以数据库为背景的所有执行SQL操作的方法。可以用 SqlSession 实例来直接执行已映射的 SQL 语句。
+    2、SqlSessionTemplate：实现了SqlSession接口中的所有执行SQL的方法，需要SqlSessionFactory实例来作为构造参数。
+    3、MapperScannerConfigurer：该实例的引入，将映射文件中的数据访问语句映射到映射文件命名空间所指定的Dao接口中声明的方法-->
+</beans>

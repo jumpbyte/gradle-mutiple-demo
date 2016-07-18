@@ -1,0 +1,84 @@
+apply from:"$rootProject.rootDir.path/baseSettings/common_props.gradle"
+
+allprojects{
+    group "utour.com"
+    version '1.0-SNAPSHOT'
+    apply plugin: "maven"
+}
+
+subprojects{
+     apply plugin: "java"
+     apply plugin: "war"
+     apply plugin: 'idea'
+     apply from: "$rootProject.rootDir.path/baseSettings/mybatisGenerate.gradle"
+    [compileJava,compileTestJava]*.options*.encoding = 'UTF-8'
+     dependencies{
+         testCompile group: 'junit', name: 'junit', version:"4.12"
+         testCompile group: 'org.springframework', name: 'spring-test', version: '4.3.1.RELEASE'
+         compile 'com.microsoft.sqlserver:sqljdbc4:4.0'
+         compile 'org.mybatis:mybatis:3.4.1'
+         compile 'org.mybatis:mybatis-spring:1.3.0'
+         compile 'ch.qos.logback:logback-classic:1.1.2'
+         compile 'org.springframework:spring-webmvc:4.0.6.RELEASE'
+         compile  group: 'org.springframework', name: 'spring-tx', version: '4.3.1.RELEASE'
+         compile  'jstl:jstl:1.2'
+         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
+         compile group: 'org.springframework', name: 'spring-jdbc', version: '4.2.0.RELEASE'
+         compile group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.1.1'
+         compile group: 'com.mchange', name: 'c3p0', version: '0.9.5.2'
+         compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.2'
+         providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+     }
+    /*配置maven仓库*/
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        //maven 私服仓库
+        maven {
+            url  REPOSITORY_URL
+        }
+    }
+    /*打包jar包任务*/
+    task packageJar(type: Jar,group:"custom") {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+}
+
+//打包上传jar到私服仓库
+uploadArchives {
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+
+        if(project.version.indexOf('-SNAPSHOT')>0) {
+            snapshotRepository(url: SNAPSHOT_REPOSITORY_URL) {//仓库地址
+                authentication(userName: "admin",password: "admin123")//用户名 密码
+            }
+        }else{
+            repository(url: RELEASE_REPOSITORY_URL) {
+                authentication(userName: "admin",password: "admin123")//用户名 密码
+            }
+        }
+//        addFilter('service') {artifact, file ->
+//            artifact.name == 'service'
+//        }
+//        addFilter('dao') {artifact, file ->
+//            artifact.name == 'dao'
+//        }
+        println project.name
+        println project.version
+        println project.group
+        pom.version = project.version
+        pom.artifactId =  project.name
+        pom.groupId=project.group
+        pom.packaging = "jar"
+    }
+}
+
+
+
+
+
+
+
+
